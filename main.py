@@ -1,11 +1,16 @@
 import streamlit as st
 from ui.layout import render_header, render_footer
 from ui.pdf_export import generate_pdf
-from agents.symptom_classifier import symptom_classifier
-from agents.condition_matcher import condition_matcher
-from agents.advice_agent import advice_agent
-from agents.report_agent import report_agent
-from crewai import Crew, Task
+from agents.symptom_classifier import SymptomClassifierAgent
+from agents.condition_matcher import ConditionMatcherAgent
+from agents.advice_agent import AdviceAgent
+from agents.report_agent import ReportAgent
+
+# Initialize agents
+classifier = SymptomClassifierAgent()
+matcher = ConditionMatcherAgent()
+advisor = AdviceAgent()
+reporter = ReportAgent()
 
 # 🧠 UI Header
 render_header()
@@ -17,39 +22,10 @@ user_input = st.text_area("Enter symptoms (e.g., fever, cough, headache):", heig
 # 🔍 Run Crew AI
 if st.button("🔍 Check Symptoms") and user_input.strip():
     with st.spinner("Getting advice from AI agents..."):
-
-        # 🧩 Define tasks dynamically with user input
-        task1 = Task(
-            description=f"Classify symptoms from user input: '{user_input}'",
-            agent=symptom_classifier,
-            expected_output="List of symptoms"
-        )
-
-        task2 = Task(
-            description="Match the classified symptoms to known conditions",
-            agent=condition_matcher,
-            expected_output="Likely conditions"
-        )
-
-        task3 = Task(
-            description="Generate health advice based on the matched conditions and symptoms",
-            agent=advice_agent,
-            expected_output="Health advice"
-        )
-
-        task4 = Task(
-            description="Compile a health report using the symptoms, conditions, and advice",
-            agent=report_agent,
-            expected_output="Final report with advice and matched conditions"
-        )
-
-        # 🧠 Assemble and run the Crew
-        crew = Crew(
-            agents=[symptom_classifier, condition_matcher, advice_agent, report_agent],
-            tasks=[task1, task2, task3, task4]
-        )
-
-        report = crew.kickoff()
+        symptoms = classifier.execute(user_input)
+        condition_scores = matcher.execute(symptoms)
+        advice = advisor.execute(user_input)
+        report = reporter.execute(symptoms, list(condition_scores.keys()), advice)
 
     # ✅ Show Results
     st.success("✅ Report Generated")

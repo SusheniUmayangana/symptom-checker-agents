@@ -1,17 +1,15 @@
 from crewai import Agent
 
-# Define the Crew AI agent
-condition_matcher = Agent(
-    role="Condition Matcher",
-    goal="Match symptoms to known conditions",
-    backstory="Uses structured rules and JSON mappings to identify likely health conditions based on user symptoms.",
-    verbose=True
-)
-
-# Define the matching logic
 class ConditionMatcherAgent:
-    def match(self, symptoms: list) -> dict:
-        # Dummy symptom-to-condition mapping
+    def __init__(self):
+        self.agent = Agent(
+            role="Condition Matcher",
+            goal="Match symptoms to known conditions",
+            backstory="Uses structured rules and JSON mappings to identify likely health conditions based on user symptoms.",
+            verbose=True
+        )
+
+    def execute(self, symptoms: list) -> dict:
         symptom_map = {
             "fever": ["flu", "dengue"],
             "cough": ["cold", "flu"],
@@ -26,16 +24,13 @@ class ConditionMatcherAgent:
         }
 
         condition_scores = {}
-
         for symptom in symptoms:
             matches = symptom_map.get(symptom.lower(), [])
             for condition in matches:
                 condition_scores[condition] = condition_scores.get(condition, 0) + 1
 
-        # Normalize scores to probabilities
         total = sum(condition_scores.values())
         if total == 0:
             return {"unknown": 1.0}
 
-        normalized = {cond: round(score / total, 2) for cond, score in condition_scores.items()}
-        return normalized
+        return {cond: round(score / total, 2) for cond, score in condition_scores.items()}
