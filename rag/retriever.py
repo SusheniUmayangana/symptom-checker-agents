@@ -1,8 +1,4 @@
-from langchain.vectorstores import FAISS
-from langchain.embeddings import OpenAIEmbeddings
+from difflib import get_close_matches
 
-def build_vector_db(chunks):
-    embeddings = OpenAIEmbeddings()
-    db = FAISS.from_documents(chunks, embeddings)
-    db.save_local("data/embeddings/")
-    return db
+def retrieve_chunks(chunks, query):
+    return [chunk for chunk in chunks if any(symptom in chunk.lower() for symptom in query.lower().split())]

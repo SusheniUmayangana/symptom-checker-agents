@@ -1,0 +1,29 @@
+### Fever
+Fever is a common symptom of viral infections. It may be accompanied by chills, sweating, and body aches. Recommended actions include rest, hydration, and paracetamol. Seek medical attention if the fever persists beyond 3 days or exceeds 102°F.
+
+### Cough
+Cough can result from respiratory infections, allergies, or irritants. Dry coughs may benefit from warm fluids and honey, while wet coughs may require expectorants. Persistent coughs should be evaluated by a healthcare provider.
+
+### Headache
+Headaches may be caused by stress, dehydration, or underlying conditions like migraines. Rest in a quiet, dark room and stay hydrated. Over-the-counter pain relief may help. Seek medical advice if headaches are frequent or severe.
+
+### Sore Throat
+A sore throat often indicates viral or bacterial infection. Gargling with warm salt water, staying hydrated, and using lozenges can provide relief. If accompanied by high fever or white patches, consult a doctor.
+
+### Dengue
+Dengue is a mosquito-borne viral illness marked by high fever, joint pain, rash, and fatigue. Avoid self-medication with NSAIDs. Seek immediate medical attention and maintain hydration. Monitor for warning signs like bleeding or abdominal pain.
+
+### COVID-19
+COVID-19 symptoms include fever, cough, loss of taste/smell, and fatigue. Isolate immediately, monitor oxygen levels, and consult a doctor if symptoms worsen. Follow local health guidelines and get tested.
+
+### Cold
+The common cold causes sneezing, nasal congestion, and mild fever. Rest, fluids, and steam inhalation help recovery. Avoid antibiotics unless prescribed for secondary infections.
+
+### Migraine
+Migraines are intense headaches often accompanied by nausea and sensitivity to light. Triggers include stress, certain foods, and hormonal changes. Rest, hydration, and prescribed medications can help manage symptoms.
+
+### Diarrhea
+Diarrhea may result from infections, food intolerance, or stress. Rehydration is critical — use oral rehydration salts (ORS). Avoid dairy and spicy foods. Seek medical help if symptoms persist or worsen.
+
+### Skin Rash
+Rashes can be caused by allergies, infections, or autoimmune conditions. Avoid scratching, use mild cleansers, and apply soothing creams. If rash spreads or is painful, consult a dermatologist.

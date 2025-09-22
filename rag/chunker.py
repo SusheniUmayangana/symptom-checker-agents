@@ -1,5 +1,3 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-def chunk_documents(texts):
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    return splitter.create_documents(texts)
+def chunk_by_heading(text, delimiter="###"):
+    chunks = text.split(delimiter)
+    return [f"{delimiter}{chunk.strip()}" for chunk in chunks if chunk.strip()]

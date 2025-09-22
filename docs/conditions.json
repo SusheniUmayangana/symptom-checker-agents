@@ -1,0 +1,71 @@
+{
+    "fever": {
+        "conditions": [
+            "viral infection",
+            "dengue",
+            "COVID-19"
+        ],
+        "advice": "Rest, hydrate, and take paracetamol. Seek help if fever exceeds 102°F or lasts more than 3 days."
+    },
+    "cough": {
+        "conditions": [
+            "cold",
+            "COVID-19",
+            "bronchitis"
+        ],
+        "advice": "Try steam inhalation and warm fluids. Persistent coughs need medical evaluation."
+    },
+    "headache": {
+        "conditions": [
+            "migraine",
+            "stress",
+            "dehydration"
+        ],
+        "advice": "Rest in a quiet space and stay hydrated. Use pain relief if needed."
+    },
+    "sore throat": {
+        "conditions": [
+            "viral infection",
+            "tonsillitis"
+        ],
+        "advice": "Gargle with warm salt water and use lozenges. See a doctor if fever is high."
+    },
+    "dengue": {
+        "conditions": [
+            "dengue"
+        ],
+        "advice": "Avoid NSAIDs and seek immediate medical care. Stay hydrated and monitor for bleeding."
+    },
+    "covid-19": {
+        "conditions": [
+            "COVID-19"
+        ],
+        "advice": "Isolate, monitor oxygen levels, and consult a doctor if symptoms worsen."
+    },
+    "cold": {
+        "conditions": [
+            "common cold"
+        ],
+        "advice": "Rest, fluids, and steam inhalation help. Avoid antibiotics unless prescribed."
+    },
+    "migraine": {
+        "conditions": [
+            "migraine"
+        ],
+        "advice": "Avoid triggers, rest in a dark room, and use prescribed medication."
+    },
+    "diarrhea": {
+        "conditions": [
+            "infection",
+            "food intolerance"
+        ],
+        "advice": "Use ORS and avoid spicy foods. Seek help if symptoms persist."
+    },
+    "skin rash": {
+        "conditions": [
+            "allergy",
+            "infection"
+        ],
+        "advice": "Use soothing creams and avoid scratching. See a dermatologist if rash spreads."
+    }
+}
