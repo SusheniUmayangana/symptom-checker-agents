@@ -1,4 +1,3 @@
-from crewai import Crew
 import streamlit as st
 from ui.layout import render_header, render_footer
 from ui.pdf_export import generate_pdf
@@ -6,13 +5,7 @@ from agents.symptom_classifier import symptom_classifier
 from agents.condition_matcher import condition_matcher
 from agents.advice_agent import advice_agent
 from agents.report_agent import report_agent
-from crewai import Task
-import requests
-
-def get_advice_from_colab(query):
-    url = "https://colab.research.google.com/drive/1NiAc6FaiNaFARPiTklxPjq0z92ayo0_4#scrollTo=RWz8p4oNJFh7"  
-    response = requests.post(url, json={"query": query})
-    return response.json()["advice"]
+from crewai import Crew, Task
 
 # 🧠 UI Header
 render_header()
@@ -22,10 +15,8 @@ st.subheader("📝 Describe your symptoms")
 user_input = st.text_area("Enter symptoms (e.g., fever, cough, headache):", height=100)
 
 # 🔍 Run Crew AI
-if st.button("🔍 Check Symptoms"):
-    with st.spinner("Getting advice from AI backend..."):
-        report = get_advice_from_colab(user_input)
-
+if st.button("🔍 Check Symptoms") and user_input.strip():
+    with st.spinner("Getting advice from AI agents..."):
 
         # 🧩 Define tasks dynamically with user input
         task1 = Task(
