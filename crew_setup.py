@@ -1,13 +1,17 @@
-from crewai import Crew, Task
-from agents.risk_analyst import risk_analyst
-from agents.compliance_researcher import compliance_researcher
-from agents.report_generator import report_generator
-from agents.privacy_specialist import privacy_specialist
+from agents.symptom_classifier import SymptomClassifierAgent
+from agents.condition_matcher import ConditionMatcherAgent
+from agents.advice_agent import AdviceAgent
+from agents.report_agent import ReportAgent
 
+def run_symptom_checker(user_input):
+    classifier = SymptomClassifierAgent()
+    matcher = ConditionMatcherAgent()
+    advisor = AdviceAgent()
+    reporter = ReportAgent()
 
-task1 = Task(agent=risk_analyst, description="Analyze model risks")
-task2 = Task(agent=compliance_researcher, description="Extract AI Act obligations")
-task3 = Task(agent=report_generator, description="Generate risk assessment report")
-task4 = Task(agent=privacy_specialist, description="Review data privacy compliance")
+    symptoms = classifier.classify(user_input)
+    conditions = matcher.match(symptoms)
+    advice = advisor.advise(conditions)
+    report = reporter.generate_report(symptoms, conditions, advice)
 
-crew = Crew(tasks=[task1, task2, task3, task4])
+    return report
