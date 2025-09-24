@@ -1,40 +1,31 @@
-import streamlit as st
-from ui.layout import render_header, render_footer
-from ui.pdf_export import generate_pdf
-from agents.symptom_classifier import SymptomClassifierAgent
+# main.py
+import os
+from agents.symptom_classifier import SymptomClassifierAgent, SymptomAgent
 from agents.condition_matcher import ConditionMatcherAgent
 from agents.advice_agent import AdviceAgent
-from agents.report_agent import ReportAgent
+from agents.report_agent import ReportAgent  
 
-# Initialize agents
-classifier = SymptomClassifierAgent()
-matcher = ConditionMatcherAgent()
-advisor = AdviceAgent()
-reporter = ReportAgent()
+def run_basic_pipeline(user_input: str) -> str:
+    agent = SymptomAgent()
+    return agent.analyze(user_input)
 
-# 🧠 UI Header
-render_header()
+def run_full_pipeline(user_input: str) -> str:
+    classifier = SymptomClassifierAgent()
+    matcher = ConditionMatcherAgent()
+    advisor = AdviceAgent()
+    reporter = ReportAgent()
 
-# 📝 User Input
-st.subheader("📝 Describe your symptoms")
-user_input = st.text_area("Enter symptoms (e.g., fever, cough, headache):", height=100)
+    symptoms = classifier.execute(user_input)
+    condition_scores = matcher.execute(symptoms)
+    advice = advisor.execute(user_input)
+    report = reporter.execute(symptoms, list(condition_scores.keys()), advice)
+    return report
 
-# 🔍 Run Crew AI
-if st.button("🔍 Check Symptoms") and user_input.strip():
-    with st.spinner("Getting advice from AI agents..."):
-        symptoms = classifier.execute(user_input)
-        condition_scores = matcher.execute(symptoms)
-        advice = advisor.execute(user_input)
-        report = reporter.execute(symptoms, list(condition_scores.keys()), advice)
+if __name__ == "__main__":
+    user_input = input("Describe your symptoms: ")
+    print("\n🩺 Gemini Response:")
+    print(run_basic_pipeline(user_input))
 
-    # ✅ Show Results
-    st.success("✅ Report Generated")
-    st.text_area("📄 Health Report", report, height=300)
-
-    # 📄 PDF Export
-    pdf_file = generate_pdf(report_text=report, filename="health_report.pdf")
-    with open(pdf_file, "rb") as f:
-        st.download_button("⬇️ Download PDF Report", f, file_name="health_report.pdf", mime="application/pdf")
-
-# 🧠 UI Footer
-render_footer()
+    print("\n📄 Full CrewAI Report:")
+    print(run_full_pipeline(user_input))
+    

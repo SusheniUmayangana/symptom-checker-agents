@@ -1,4 +1,7 @@
 import streamlit as st
+from agents.symptom_classifier import SymptomAgent
+
+agent = SymptomAgent()
 
 def render_header():
     st.set_page_config(page_title="Symptom Checker", page_icon="🩺", layout="centered")
