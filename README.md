@@ -1,40 +1,72 @@
-# Symptom Checker – Agent-Based Health Assistant
+# 🩺 Symptom Checker – Agent-Based Health Assistant
 
-This solo project is inspired by the IRWA module structure and built using Python, Crew AI, and Retrieval-Augmented Generation (RAG). It simulates a multi-agent system that classifies symptoms, matches conditions, and provides basic health advice.
+An intelligent health assistant powered by a multi-agent system built with Crew AI and Streamlit. This application analyzes user-described symptoms, identifies potential conditions, and provides structured, AI-generated advice in a clean, user-friendly interface.
 
-## 🧠 Agent Architecture
+------
 
-- **Symptom Classifier Agent**  
-  Parses user input and identifies relevant symptoms.
+## ☁️ Deployment
 
-- **Condition Matcher Agent**  
-  Maps symptoms to possible health conditions using rule-based logic or similarity scoring.
+This application is deployed and publicly accessible via Streamlit Community Cloud.
 
-- **Advice Agent**  
-  Suggests next steps based on matched conditions (e.g., rest, consult doctor, emergency).
+[Live App Link ](https://symptom-checker-agents-6ydzmaxdrayxq5d9czlf6n.streamlit.app/)
+-----
 
-- **Report Agent**  
-  Formats the final output and enables download/export of the health report.
 
-## 🔧 Tech Stack
+## ✨ Features
 
-- Python  
-- Crew AI  
-- RAG (Retrieval-Augmented Generation)  
-- Streamlit (for UI and download button)  
-- AI Act documents (for testing RAG pipeline)
+  * **Multi-Agent System**: Utilizes a sophisticated backend with specialized AI agents for symptom classification, condition matching, advice generation, and reporting.
+  * **Intuitive UI**: A clean and elegant interface built with Streamlit, designed for ease of use.
+  * **Dynamic Analysis**: Get instant analysis by describing your symptoms in natural language.
+  * **Polished Reports**: View the results in beautifully styled summary cards.
+  * **PDF Export**: Download a professional, well-formatted PDF of your health report for your records.
 
-## 🎯 Goals
+-----
 
-- Practice multi-agent orchestration using Crew AI  
-- Apply RAG to real-world document retrieval  
-- Build a clean UI with styled output and downloadable reports  
-- Explore domain adaptation from risk analysis to healthcare
+## 🔧 Tech Stack & Architecture
 
-## 🚀 Status
+This project leverages a modern stack to create an agent-based system.
 
-Initial setup complete. Agent logic and UI integration in progress.
+  * **Backend**: Python, Crew AI
+  * **Frontend**: Streamlit
+  * **PDF Generation**: FPDF2
+  * **Agents**:
+      * **Symptom Classifier Agent**: Parses user input to identify key medical symptoms.
+      * **Condition Matcher Agent**: Maps the identified symptoms to a database of potential health conditions.
+      * **Advice Agent**: Generates contextual advice and detailed analysis based on the user's input.
+      * **Report Agent**: Aggregates the findings from other agents and formats the final, user-facing report.
 
-## 📁 Repo Notes
+-----
 
-This project is a solo learning initiative and not part of any group submission. It builds on concepts from the IRWA module but explores a different domain for personal mastery.
+## 🚀 How to Run Locally
+
+To get this project running on your local machine, follow these steps.
+
+1. **Create a Virtual Environment:**
+
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    ```
+
+2.  **Install Dependencies:**
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Run the Streamlit App:**
+
+    ```bash
+    streamlit run streamlit_app.py
+    ```
+
+-----
+
+## 🎯 Project Goals
+
+This project was developed to practice and master several key concepts:
+
+  * Orchestrating a multi-agent system using Crew AI.
+  * Building a polished, interactive web application with Streamlit.
+  * Integrating multiple components into a cohesive, end-to-end application.
+  * Applying modern UI/UX principles to data-driven applications.
