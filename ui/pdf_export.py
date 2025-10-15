@@ -1,95 +1,100 @@
+# pdf_export.py
+
 from datetime import datetime
 from fpdf import FPDF
-import re
 import os
+import re
 
-class PDFReport(FPDF):
-    def header(self):
-        self.set_font("Arial", "B", 16)
-        self.set_text_color(0, 102, 204)
-        self.cell(0, 10, "[Health] Symptom Checker Assistant", ln=True, align="C")
-        self.ln(5)
+# --- COLOR PALETTE (RGB) ---
+COLOR_DEEP_TEAL = (13, 148, 136)
+COLOR_VIBRANT_BLUE = (37, 99, 235)
+COLOR_DARK_CHARCOAL = (51, 65, 85)
+COLOR_LIGHT_GREY_BG = (241, 245, 249)
+COLOR_MEDIUM_GREY = (160, 160, 160)
 
-        self.set_draw_color(200, 200, 200)
-        self.line(10, self.get_y(), 200, self.get_y())
-        self.ln(5)
-
-    def section_title(self, title):
-        self.set_font("Arial", "B", 12)
-        self.set_text_color(0, 0, 128)
-        self.cell(0, 10, title, ln=True)
-        self.set_text_color(0, 0, 0)
-
-    def section_body(self, text):
-        self.set_font("Arial", "", 11)
-        self.multi_cell(0, 8, text)
-        self.ln()
-
-    def footer(self):
-        self.set_y(-15)
-        self.set_font("Arial", "I", 8)
-        self.set_text_color(128, 128, 128)
-        self.cell(0, 10, f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", align="C")
-
-def clean_text(text: str) -> str:
-    # Replace emojis with readable tags
-    emoji_map = {
-        "🩺": "[Health]",
-        "🦠": "[Virus]",
-        "✅": "[Success]",
-        "🔍": "[Search]",
-        "⬇️": "[Download]",
-        "📄": "[Report]",
-    }
-    for emoji, replacement in emoji_map.items():
-        text = text.replace(emoji, replacement)
-
-    # Remove any remaining non-latin characters
-    return re.sub(r'[^\x00-\xFF]+', '', text)
 
 def strip_markdown(text: str) -> str:
-    # Remove bold, italic, and headers
-    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)  # bold
-    text = re.sub(r'\*(.*?)\*', r'\1', text)      # italic
-    text = re.sub(r'_([^_]+)_', r'\1', text)      # underscore italic
-    text = re.sub(r'^#+\s*(.*)', r'\1', text, flags=re.MULTILINE)  # headers
+    """A simple function to remove bold and italic markdown."""
+    # Remove bold (**text**)
+    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
+    # Remove italic (*text* or _text_)
+    text = re.sub(r'[_*](.*?)[_*]', r'\1', text)
     return text
 
 
-def generate_pdf(report_text: str, filename: str = "health_report.pdf") -> str:
+class PDF(FPDF):
+    def header(self):
+        """ Creates the elegant header with the app title and a subtitle. """
+        self.set_font("Helvetica", "B", 18)
+        self.set_text_color(*COLOR_DEEP_TEAL)
+        self.cell(0, 10, "Symptom Checker Report", ln=True, align="C")
+        self.set_font("Helvetica", "", 11)
+        self.set_text_color(*COLOR_DARK_CHARCOAL)
+        self.cell(0, 8, "AI-Generated Health Analysis", ln=True, align="C")
+        self.ln(10)
+
+    def section_title(self, title: str):
+        """ Creates a styled title for a new section. """
+        self.set_font("Helvetica", "B", 12)
+        self.set_fill_color(*COLOR_LIGHT_GREY_BG)
+        self.set_text_color(*COLOR_VIBRANT_BLUE)
+        self.cell(0, 10, f"  {title}", ln=True, fill=True)
+        self.set_text_color(*COLOR_DARK_CHARCOAL)
+        self.ln(5)
+
+    def section_body(self, text: str):
+        """ Formats the body text, with special handling for bullet points. """
+        self.set_font("Helvetica", "", 11)
+        self.set_text_color(*COLOR_DARK_CHARCOAL)
+        lines = text.split('\n')
+        for line in lines:
+            line = line.strip()
+            if line.startswith(("• ", "* ", "- ")):
+                self.set_x(15)
+                self.cell(5, 8, chr(149))
+                # Remove the bullet character from the start of the line before printing
+                if line.startswith("• "):
+                    self.multi_cell(0, 8, line[2:])
+                else:
+                    self.multi_cell(0, 8, line[1:].strip())
+            else:
+                self.set_x(10)
+                self.multi_cell(0, 8, line)
+        self.ln(5)
+
+    def footer(self):
+        """ Creates the page footer with a line, page number, and timestamp. """
+        self.set_y(-15)
+        self.set_draw_color(*COLOR_MEDIUM_GREY)
+        self.line(10, self.get_y(), 200, self.get_y())
+        self.ln(1)
+        self.set_font("Helvetica", "I", 8)
+        self.set_text_color(*COLOR_MEDIUM_GREY)
+        timestamp = f"Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        page_number = f"Page {self.page_no()}"
+        self.cell(0, 10, timestamp, align="L")
+        self.set_xy(-30, -15)
+        self.cell(0, 10, page_number, align="R")
+
+
+def generate_pdf(report_data: dict, filename: str) -> str:
+    """
+    Generates a polished PDF report from a dictionary of data.
+    """
     folder = "reports"
     os.makedirs(folder, exist_ok=True)
     filepath = os.path.join(folder, filename)
-
-    pdf = PDFReport()
+    
+    pdf = PDF()
     pdf.add_page()
 
-    # ✅ Clean the report text
-    report_text = clean_text(report_text)
-    report_text = strip_markdown(report_text)
-    
-    # ✅ Add this debug line
-    print("[PDF Content Preview]", report_text)
-
-    # Split report into sections
-    sections = {
-        "Identified Symptoms": "",
-        "Matched Conditions": "",
-        "Advice": ""
-    }
-
-    current_section = None
-    for line in report_text.split("\n"):
-        line = line.strip().rstrip(":")  # ✅ Strip colon
-        if line in sections:
-            current_section = line
-        elif current_section:
-            sections[current_section] += line + "\n"
-
-    # Render each section
-    for title, body in sections.items():
+    for title, body in report_data.items():
+        # Clean the text to remove markdown and non-compatible characters
+        body_cleaned = strip_markdown(body)
+        body_cleaned = re.sub(r'[^\x00-\x7F]+', ' ', body_cleaned) # Replace unsupported chars with a space
+        
         pdf.section_title(title)
-        pdf.section_body(body.strip())
+        pdf.section_body(body_cleaned)
 
     pdf.output(filepath)
     return filepath

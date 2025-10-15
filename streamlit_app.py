@@ -1,93 +1,113 @@
+# streamlit_app.py
+
 import streamlit as st
 from agents.symptom_classifier import SymptomClassifierAgent, SymptomAgent
 from agents.condition_matcher import ConditionMatcherAgent
 from agents.advice_agent import AdviceAgent
 from agents.report_agent import ReportAgent
-from ui.layout import render_header, render_footer
+from ui.layout import render_header, render_footer # We remove render_section
 from ui.pdf_export import generate_pdf
 from datetime import datetime
+import re
 
-# Initialize agents
-classifier = SymptomClassifierAgent()
-matcher = ConditionMatcherAgent()
-advisor = AdviceAgent()
-reporter = ReportAgent()
-agent = SymptomAgent()
+# --- Agent Initialization ---
+# It's good practice to cache heavy objects to improve performance
+@st.cache_resource
+def load_agents():
+    classifier = SymptomClassifierAgent()
+    matcher = ConditionMatcherAgent()
+    advisor = AdviceAgent()
+    reporter = ReportAgent()
+    agent = SymptomAgent()
+    return classifier, matcher, advisor, reporter, agent
 
-# Render header
+classifier, matcher, advisor, reporter, agent = load_agents()
+
+# --- Page Rendering ---
 render_header()
 
-# Main input section
-st.subheader("Describe your symptoms:")
-user_input = st.text_area("Enter your symptoms below", height=100)
+# --- Main Input Section ---
+st.subheader("How are you feeling today?")
+user_input = st.text_area(
+    "Describe your symptoms in detail. For example: 'I have a high fever, a sore throat, and a persistent headache.'",
+    height=120,
+    placeholder="Enter your symptoms here..."
+)
 
-# Session state setup
-if "report" not in st.session_state:
-    st.session_state.report = ""
-if "gemini_response" not in st.session_state:
-    st.session_state.gemini_response = ""
+# --- Session State Management ---
+if "report_data" not in st.session_state:
+    st.session_state.report_data = {}
 
-# Run agents on button click
-if st.button("🔍 Check Symptoms") and user_input.strip():
-    with st.spinner("Getting advice from AI agents..."):
-        gemini_response = agent.analyze(user_input)
+# --- Logic on Button Click ---
+if st.button("🔍 Analyze My Symptoms") and user_input.strip():
+    with st.spinner("Our AI agents are analyzing your symptoms... Please wait."):
+        # Run agents to get data
         symptoms = classifier.execute(user_input)
         condition_scores = matcher.execute(symptoms)
         advice = advisor.execute(user_input)
+        gemini_response = agent.analyze(user_input) # Assuming this gives additional advice
 
-        combined_advice = f"{advice}\n\nGemini says:\n{gemini_response}"
-        report = (
-            "Identified Symptoms:\n"
-            + ", ".join(symptoms)
-            + "\n\nMatched Conditions:\n"
-            + ", ".join(condition_scores.keys())
-            + "\n\nAdvice:\n"
-            + combined_advice
-        )
-
-        st.session_state.report = report
-        st.session_state.gemini_response = gemini_response
-
-# ✅ Show Report if Available
-if st.session_state.report:
-    st.success("✅ Health Report Generated")
-
-    # Split report into sections
-    sections = {
-        "Identified Symptoms": "",
-        "Matched Conditions": "",
-        "Advice": ""
+        # Store structured data in session state instead of a single string
+        st.session_state.report_data = {
+            "Identified Symptoms": ", ".join(symptoms) if symptoms else "No specific symptoms identified.",
+            "Potential Conditions": ", ".join(condition_scores.keys()) if condition_scores else "No matching conditions found based on input.",
+            "Personalized Advice": advice,
+            "Additional Insights": gemini_response
+        }
+        
+# --- Report Display ---
+if st.session_state.report_data:
+    st.success("✅ Your health analysis is complete!")
+    
+    # Define icons for each section
+    icons = {
+        "Identified Symptoms": "🩺",
+        "Potential Conditions": "🧬",
+        "Personalized Advice": "💡",
+        "Additional Insights": "🤖"
     }
 
-    current_section = None
-    for line in st.session_state.report.split("\n"):
-        line = line.strip().rstrip(":")
-        if line in sections:
-            current_section = line
-        elif current_section:
-            sections[current_section] += line + "\n"
+    # Generate the text for the PDF report
+    report_text_for_pdf = ""
 
-    # Render each section with Markdown
-    st.markdown("### 🩺 Your Health Summary")
-    for title, body in sections.items():
+    for title, body in st.session_state.report_data.items():
         if body.strip():
-            st.markdown(f"#### {title}")
-            st.markdown(
-                f"<div style='background-color:#f9f9f9; padding:10px; border-radius:6px; font-size:15px;'>{body.strip()}</div>",
-                unsafe_allow_html=True
-            )
+            # Format for display
+            icon = icons.get(title, "📄")
 
-    # 📄 PDF Export
-    filename = f"health_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-    pdf_file = generate_pdf(report_text=st.session_state.report, filename=filename)
+            # Convert basic markdown to HTML for consistent rendering in the card
+            html_body = body.strip().replace("\n", "<br>")
+            html_body = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_body) # Bold
+            html_body = html_body.replace("•", "•&nbsp;") # Ensure space after bullet
 
-    with open(pdf_file, "rb") as f:
-        st.download_button(
-            label="⬇️ Download PDF Report",
-            data=f,
-            file_name=filename,
-            mime="application/pdf"
-        )
+            st.markdown(f"""
+                <div class="report-card">
+                    <h4>{icon} {title}</h4>
+                    <p>{body.strip()}</p>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Format for PDF
+            report_text_for_pdf += f"{title}:\n{body.strip()}\n\n"
+    
+    # --- PDF Export Section (Your new, improved code) ---
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1.5, 2, 1]) # Create columns for centering
+    with col2:
+        filename = f"health_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        try:
+            pdf_file = generate_pdf(report_data=st.session_state.report_data, filename=filename)
 
-# Render footer
+            with open(pdf_file, "rb") as f:
+                st.download_button(
+                    label="⬇️ Download PDF Report",
+                    data=f,
+                    file_name=filename,
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+        except Exception as e:
+            st.error(f"Failed to generate PDF. Error: {e}")
+
+# --- Footer ---
 render_footer()
