@@ -1,26 +1,17 @@
-from crewai import Agent
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    verbose=True,
-    temperature=0.1
-)
+# agents/report_agent.py
 
 class ReportAgent:
     def __init__(self):
-        self.agent = Agent(
-            role="Report Compiler",
-            goal="Create a final health report",
-            backstory="Expert in formatting health advice and matched conditions into a clear, readable summary for users.",
-            verbose=True,
-            allow_delegation=False,
-            llm=llm
-        )
+        # The unused crewai.Agent has been removed to fix the error.
+        print("Initialized ReportAgent.")
 
-    def execute(self, symptoms: list, conditions: list, advice: str) -> str:
+    def execute(self, symptoms: list, conditions: dict, advice: str) -> str:
+        """
+        This function is not strictly necessary as formatting is handled in the main app,
+        but it's here for logical separation.
+        """
         symptom_str = ", ".join(symptoms) if symptoms else "None specified"
-        condition_str = ", ".join(conditions) if conditions else "No conditions matched"
+        condition_str = ", ".join(conditions.keys()) if conditions else "No conditions matched"
 
         return (
             f"Health Report\n\n"

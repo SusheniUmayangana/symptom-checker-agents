@@ -1,45 +1,30 @@
-from crewai import Agent
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    verbose=True,
-    temperature=0.1
-)
+# agents/condition_matcher.py
 
 class ConditionMatcherAgent:
     def __init__(self):
-        self.agent = Agent(
-            role="Condition Matcher",
-            goal="Match symptoms to known conditions",
-            backstory="Uses structured rules and JSON mappings to identify likely health conditions based on user symptoms.",
-            verbose=True,
-            allow_delegation=False,
-            llm=llm
-        )
-
-    def execute(self, symptoms: list) -> dict:
-        symptom_map = {
-            "fever": ["flu", "dengue"],
-            "cough": ["cold", "flu"],
-            "headache": ["migraine", "flu"],
-            "rash": ["allergy", "dengue"],
-            "joint pain": ["dengue", "arthritis"],
-            "sore throat": ["cold", "flu"],
-            "nausea": ["food poisoning", "dengue"],
-            "vomiting": ["food poisoning", "dengue"],
-            "bleeding": ["dengue"],
-            "itching": ["allergy"]
+        print("Initialized ConditionMatcherAgent.")
+        
+        # Define the conditions and their associated symptoms
+        self.condition_symptoms = {
+            "common cold": ["cough", "sore throat", "runny nose"],
+            "flu": ["fever", "cough", "sore throat", "body aches", "fatigue"],
+            "migraine": ["headache", "nausea", "sensitivity to light"],
+            "food poisoning": ["nausea", "vomiting", "diarrhea"]
         }
 
-        condition_scores = {}
-        for symptom in symptoms:
-            matches = symptom_map.get(symptom.lower(), [])
-            for condition in matches:
-                condition_scores[condition] = condition_scores.get(condition, 0) + 1
-
-        total = sum(condition_scores.values())
-        if total == 0:
-            return {"unknown": 1.0}
-
-        return {cond: round(score / total, 2) for cond, score in condition_scores.items()}
+    def execute(self, symptoms: list) -> dict:
+        """
+        Matches detected symptoms to possible conditions.
+        """
+        scores = {}
+        for condition, required_symptoms in self.condition_symptoms.items():
+            # Calculate how many of the user's symptoms match the condition
+            matched_symptoms = set(symptoms) & set(required_symptoms)
+            score = len(matched_symptoms)
+            if score > 0:
+                scores[condition] = score
+        
+        # Sort conditions by how many symptoms matched
+        sorted_scores = dict(sorted(scores.items(), key=lambda item: item[1], reverse=True))
+        print(f"[ConditionMatcherAgent] Matched Conditions: {sorted_scores}")
+        return sorted_scores

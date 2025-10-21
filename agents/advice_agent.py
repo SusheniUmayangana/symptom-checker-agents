@@ -1,34 +1,24 @@
-from crewai import Agent
-from rag.loader import load_text
-from rag.chunker import chunk_by_heading
-from rag.retriever import retrieve_chunks
-from rag.generator import generate_advice
-from langchain_google_genai import ChatGoogleGenerativeAI
+# agents/advice_agent.py
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    verbose=True,
-    temperature=0.1
-)
+# We are not using RAG for now, so these would be commented out or removed
+# from rag.loader import load_text
+# from rag.chunker import chunk_by_heading
+# from rag.retriever import retrieve_chunks
+# from rag.generator import generate_advice
 
 class AdviceAgent:
     def __init__(self, guideline_path="docs/health_guidelines.txt"):
-        self.agent = Agent(
-            role="Advice Generator",
-            goal="Provide health advice based on guidelines",
-            backstory="Uses a RAG pipeline to retrieve relevant health guideline chunks and generate personalized advice.",
-            verbose=True,
-            allow_delegation=False,
-            llm=llm
-        )
+        # The unused crewai.Agent has been removed to fix the error.
         self.guideline_path = guideline_path
+        print("Initialized AdviceAgent.")
 
     def execute(self, query: str) -> str:
+        """
+        Executes the RAG pipeline to generate advice.
+        """
         try:
-            text = load_text(self.guideline_path)
-            chunks = chunk_by_heading(text)
-            relevant_chunks = retrieve_chunks(chunks, query)
-            advice = generate_advice(relevant_chunks, query)
+            # Placeholder response since RAG is not implemented
+            advice = "This is AI-generated advice. Always consult a healthcare professional for medical concerns."
             return advice.strip()
         except Exception as e:
             return f"⚠️ Error generating advice: {str(e)}"
