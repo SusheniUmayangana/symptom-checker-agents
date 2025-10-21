@@ -1,6 +1,6 @@
 # 🩺 Symptom Checker – Agent-Based Health Assistant
 
-An intelligent health assistant powered by a multi-agent system built with Crew AI and Streamlit. This application analyzes user-described symptoms, identifies potential conditions, and provides structured, AI-generated advice in a clean, user-friendly interface.
+An intelligent, multi-user health assistant that provides AI-powered symptom analysis, saves user history, and offers premium features through a "Pro" plan. This application is built with Python, Streamlit, Google Gemini, and Firebase.
 
 ------
 
@@ -12,30 +12,50 @@ This application is deployed and publicly accessible via Streamlit Community Clo
 -----
 
 
+## 📸 Screenshots
+
+Here is a look at the finished application, showcasing the clean UI and Pro features.
+
+| Main Analysis Page | History Page | Trend Analysis (Pro) | Pro page |
+| :---: | :---: | :--: | :--: |
+| ![Main App Screenshot](screenshots/main_app.png) | ![History Screenshot](screenshots/history_tab.png) | ![Analysis Screenshot](screenshots/Past_Symptom_Analyses.png) | ![Pro Screenshot](screenshots/Upgrade_to_Pro.png) |
+
+
+---
+
 ## ✨ Features
 
-  * **Multi-Agent System**: Utilizes a sophisticated backend with specialized AI agents for symptom classification, condition matching, advice generation, and reporting.
-  * **Intuitive UI**: A clean and elegant interface built with Streamlit, designed for ease of use.
-  * **Dynamic Analysis**: Get instant analysis by describing your symptoms in natural language.
-  * **Polished Reports**: View the results in beautifully styled summary cards.
-  * **PDF Export**: Download a professional, well-formatted PDF of your health report for your records.
+This is a full-featured web application with a complete user management and monetization system.
 
------
+### Core Features
+* **User Authentication:** Secure sign-up, login, and logout functionality using Firebase Authentication.
+* **AI-Powered Analysis:** Users can describe their symptoms in natural language to receive an AI-generated analysis.
+* **Persistent History:** Each user's analysis history is saved to a database and can be viewed and deleted at any time.
+* **Modern UI:** A clean, professional, and responsive user interface built with custom styling.
+* **PDF Export:** Users can download a well-formatted PDF of their health report.
+
+### 💎 Pro Plan Features
+* **Usage Limits:** Free users are limited to 10 analyses, creating an incentive to upgrade.
+* **Mock Payment Page:** A realistic (but non-functional) payment page with form validation to simulate the upgrade process.
+* **Deeper AI Analysis:** Pro users get access to a more powerful Gemini model (`gemini-2.5-pro`) for higher-quality insights.
+* **Unlimited History:** Pro users can view their entire analysis history, whereas free users are limited.
+* **Trend Analysis:** A Pro-only feature that visualizes a user's symptom frequency over time with a bar chart.
+* **PDF Customization:** Pro users can download reports without any application branding in the footer.
+
+---
 
 ## 🔧 Tech Stack & Architecture
 
-This project leverages a modern stack to create an agent-based system.
+* **Frontend:** Streamlit
+* **Backend & Database:** Python, Firebase (Authentication & Realtime Database)
+* **AI Models:** Google Gemini
+* **Key Libraries:**
+    * `Pyrebase4` (for Firebase connection)
+    * `google-generativeai` (for Gemini API)
+    * `Pandas` (for charting)
+    * `FPDF2` (for PDF generation)
 
-  * **Backend**: Python, Crew AI
-  * **Frontend**: Streamlit
-  * **PDF Generation**: FPDF2
-  * **Agents**:
-      * **Symptom Classifier Agent**: Parses user input to identify key medical symptoms.
-      * **Condition Matcher Agent**: Maps the identified symptoms to a database of potential health conditions.
-      * **Advice Agent**: Generates contextual advice and detailed analysis based on the user's input.
-      * **Report Agent**: Aggregates the findings from other agents and formats the final, user-facing report.
-
------
+---
 
 ## 🚀 How to Run Locally
 
