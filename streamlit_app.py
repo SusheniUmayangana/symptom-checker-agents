@@ -223,6 +223,18 @@ else:
                 for title, body in st.session_state.report_data.items():
                     if body and body.strip():
                         icon = report_icons.get(title, "📄")
+
+                        html_body = body.strip().replace("\n", "<br>")
+                        html_body = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_body) # Bold
+                        html_body = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html_body)       # Italic
+                        
+                        st.markdown(f"""
+                            <div class="report-card">
+                                <h4>{icon} {title}</h4>
+                                <p>{html_body}</p>
+                            </div>
+                        """, unsafe_allow_html=True)
+                        
                         st.markdown(f"""<div class="report-card"><h4>{icon} {title}</h4><p>{body.strip().replace("\n", "<br>")}</p></div>""", unsafe_allow_html=True)
                 st.markdown("---")
                 col1, col2 = st.columns([4, 2])
