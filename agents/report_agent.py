@@ -1,4 +1,11 @@
 from crewai import Agent
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-pro",
+    verbose=True,
+    temperature=0.1
+)
 
 class ReportAgent:
     def __init__(self):
@@ -6,7 +13,9 @@ class ReportAgent:
             role="Report Compiler",
             goal="Create a final health report",
             backstory="Expert in formatting health advice and matched conditions into a clear, readable summary for users.",
-            verbose=True
+            verbose=True,
+            allow_delegation=False,
+            llm=llm
         )
 
     def execute(self, symptoms: list, conditions: list, advice: str) -> str:

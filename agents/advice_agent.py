@@ -3,6 +3,13 @@ from rag.loader import load_text
 from rag.chunker import chunk_by_heading
 from rag.retriever import retrieve_chunks
 from rag.generator import generate_advice
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-pro",
+    verbose=True,
+    temperature=0.1
+)
 
 class AdviceAgent:
     def __init__(self, guideline_path="docs/health_guidelines.txt"):
@@ -10,7 +17,9 @@ class AdviceAgent:
             role="Advice Generator",
             goal="Provide health advice based on guidelines",
             backstory="Uses a RAG pipeline to retrieve relevant health guideline chunks and generate personalized advice.",
-            verbose=True
+            verbose=True,
+            allow_delegation=False,
+            llm=llm
         )
         self.guideline_path = guideline_path
 

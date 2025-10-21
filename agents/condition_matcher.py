@@ -1,4 +1,11 @@
 from crewai import Agent
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+llm = ChatGoogleGenerativeAI(
+    model="gemini-pro",
+    verbose=True,
+    temperature=0.1
+)
 
 class ConditionMatcherAgent:
     def __init__(self):
@@ -6,7 +13,9 @@ class ConditionMatcherAgent:
             role="Condition Matcher",
             goal="Match symptoms to known conditions",
             backstory="Uses structured rules and JSON mappings to identify likely health conditions based on user symptoms.",
-            verbose=True
+            verbose=True,
+            allow_delegation=False,
+            llm=llm
         )
 
     def execute(self, symptoms: list) -> dict:
