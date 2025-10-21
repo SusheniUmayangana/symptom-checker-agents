@@ -169,6 +169,9 @@ else:
         st.sidebar.markdown("---")
         if st.sidebar.button("Sign Out"):
             st.session_state.user = None
+            st.session_state.report_data = {}
+            st.session_state.selected_report = None
+            
             set_page('login')
             st.rerun()
 
@@ -220,13 +223,13 @@ else:
                     "Identified Symptoms": "🩺", "Potential Conditions": "🧬",
                     "Personalized Advice": "💡", "Additional Insights": "🤖"
                 }
+
                 for title, body in st.session_state.report_data.items():
                     if body and body.strip():
                         icon = report_icons.get(title, "📄")
-
                         html_body = body.strip().replace("\n", "<br>")
-                        html_body = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_body) # Bold
-                        html_body = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html_body)       # Italic
+                        html_body = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_body)
+                        html_body = re.sub(r'\*(.*?)\*', r'<em>\1</em>', html_body)
                         
                         st.markdown(f"""
                             <div class="report-card">
@@ -234,12 +237,12 @@ else:
                                 <p>{html_body}</p>
                             </div>
                         """, unsafe_allow_html=True)
-                        
-                        st.markdown(f"""<div class="report-card"><h4>{icon} {title}</h4><p>{body.strip().replace("\n", "<br>")}</p></div>""", unsafe_allow_html=True)
+                
                 st.markdown("---")
                 col1, col2 = st.columns([4, 2])
                 with col2:
                     st.button("Start New Scenario", on_click=clear_report, use_container_width=True)
+                
                 try:
                     pdf_file = generate_pdf(report_data=st.session_state.report_data, filename="health_report.pdf", is_pro=is_pro)
                     with open(pdf_file, "rb") as f:
