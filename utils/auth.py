@@ -17,8 +17,10 @@ def sign_up(email, password, name):
             "plan": "free",
             "scenarios_used": 0
         }
-        db.child("users").child(user['localId']).set(user_data)
+        # Fix: Pass the idToken so the secure database accepts the write
+        db.child("users").child(user['localId']).set(user_data, token=user['idToken'])
         return user
+    
     except Exception as e:
         st.error(f"Error: Could not create account. {e}")
         return None
