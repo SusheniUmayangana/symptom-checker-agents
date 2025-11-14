@@ -28,9 +28,9 @@ def sign_up(email, password, name):
 def sign_in(email, password):
     try:
         user = auth.sign_in_with_email_and_password(email, password)
-        user_profile = db.child("users").child(user['localId']).get().val()
-
-        # --- THIS IS THE FIX ---
+       # In utils/auth.py, inside the sign_in function:
+        user_profile = db.child("users").child(user['localId']).get(token=user['idToken']).val()
+        
         # Check if the user profile was found in the database
         if user_profile:
             st.session_state['user'] = {
